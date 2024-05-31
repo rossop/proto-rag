@@ -17,7 +17,7 @@ def connect_to_neo4j(uri: str, user: str, password: str):
 
 
 def save_data_to_neo4j(session, chunks: List[Dict[str, Any]]) -> None:
-    """Saves chunked data with metadata to the Neo4j database.
+    """Saves chunked data with metadata to the Neo4j database, merging chunks and creating Page and Document nodes.
 
     Args:
         session: Neo4j database session.
@@ -26,13 +26,12 @@ def save_data_to_neo4j(session, chunks: List[Dict[str, Any]]) -> None:
     for chunk in chunks:
         session.run(
             """
-            CREATE (n:Chunk {
-                pdf_name: $pdf_name,
-                page_number: $page_number,
-                chunk_seq_id: $chunk_seq_id,
-                chunk_text: $chunk_text,
-                form_id: $form_id
-            })
+            MERGE (d:Document {name: $pdf_name, form_id: $form_id})
+            MERGE (p:Page {pdf_name: $pdf_name, page_number: $page_number})
+            MERGE (n:Chunk {pdf_name: $pdf_name, page_number: $page_number, chunk_seq_id: $chunk_seq_id})
+            SET n.chunk_text = $chunk_text
+            MERGE (d)-[:HAS_PAGE]->(p)
+            MERGE (p)-[:HAS_CHUNK]->(n)
             """,
             pdf_name=chunk["pdf_name"],
             page_number=chunk["page_number"],
