@@ -1,5 +1,7 @@
 # Proto-RAG: Retrieval-Augmented Generation with Neo4j and OpenAI
 
+![DALL-E generated banner](assets/banner-proto-rag.jpg "DALL-E generated banner")
+
 Proto-RAG is a Retrieval-Augmented Generation (RAG) system that integrates Neo4j as a knowledge graph and OpenAI's GPT-3.5 to provide intelligent responses based on the data stored in the knowledge graph. This project utilizes LangChain to facilitate the interaction between the knowledge graph and the language model.
 
 ## Features
